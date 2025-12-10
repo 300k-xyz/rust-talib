@@ -6,4 +6,7 @@ pub mod kdj_keeper;
 pub mod macd_keeper;
 pub mod rsi_keeper;
 pub mod stochastic_oscillator_keeper;
+pub mod common_utils;
+pub mod trade_price_keeper;
+pub mod tick_price_keeper;
 
