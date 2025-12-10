@@ -58,3 +58,53 @@ pub fn get_variance(
     let variance = total_diff / (end - start) as f64;
     variance.sqrt()
 }
+
+/// Calculates volatility (standard deviation of returns) for a rolling window.
+/// 
+/// # Arguments
+/// * `prices` - Slice of prices
+/// * `period` - Rolling window period
+/// 
+/// # Returns
+/// Vector of volatility values (same length as input, first period-1 values are None)
+pub fn calculate_volatility_percentage(prices: &[f64], period: usize) -> Vec<Option<f64>> {
+    if prices.len() < period {
+        return vec![None; prices.len()];
+    }
+
+    let mut volatilities = vec![None; period - 1];
+
+    for i in (period - 1)..prices.len() {
+        let window_start = i - period + 1;
+        let window_prices = &prices[window_start..=i];
+        
+        // Calculate returns
+        let mut returns = Vec::new();
+        for j in 1..window_prices.len() {
+            if window_prices[j - 1] > 0.0 {
+                let ret = (window_prices[j] - window_prices[j - 1]) / window_prices[j - 1];
+                returns.push(ret);
+            }
+        }
+
+        if returns.is_empty() {
+            volatilities.push(Some(0.0));
+        } else {
+            // Calculate mean of returns
+            let mean = returns.iter().sum::<f64>() / returns.len() as f64;
+            
+            // Calculate standard deviation of returns
+            let variance = returns.iter()
+                .map(|r| {
+                    let diff = r - mean;
+                    diff * diff
+                })
+                .sum::<f64>() / returns.len() as f64;
+            
+            let vol = variance.sqrt();
+            volatilities.push(Some(vol));
+        }
+    }
+
+    volatilities
+}

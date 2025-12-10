@@ -10,4 +10,5 @@ pub mod common_utils;
 pub mod trade_price_keeper;
 pub mod tick_price_keeper;
 pub mod std_keeper;
+pub mod std_percentage_keeper;
 
