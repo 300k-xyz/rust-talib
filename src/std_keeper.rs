@@ -34,18 +34,16 @@ impl StdKeeper {
     /// Updates the current bid and ask prices
     pub fn on_receive_tick(&mut self, timestamp: u64, bid: f64, ask: f64) {
         self.tick_price_keeper.on_receive_tick(bid, ask);
-        
-        // Update tick price keeper periodically
-        self.tick_price_keeper.on_period_callback(timestamp);
-        
-        // Update SMA with mid price
-        let mid = (bid + ask) / 2.0;
-        if mid > 0.0 {
-            self.sma_keeper.add(timestamp, mid);
-        }
-        
         // Update cache if enough time has passed
         if timestamp >= self.last_cache_timestamp + self.frequency_ms {
+                    // Update tick price keeper periodically
+            self.tick_price_keeper.on_period_callback(timestamp);
+            
+            // Update SMA with mid price
+            let mid = (bid + ask) / 2.0;
+            if mid > 0.0 {
+                self.sma_keeper.add(timestamp, mid);
+            }
             self.update_cache(timestamp);
         }
     }

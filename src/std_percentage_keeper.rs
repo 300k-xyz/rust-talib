@@ -35,24 +35,22 @@ impl StdPercentageKeeper {
     /// Updates the current bid and ask prices
     pub fn on_receive_tick(&mut self, timestamp: u64, bid: f64, ask: f64) {
         self.tick_price_keeper.on_receive_tick(bid, ask);
-        
-        // Calculate and store mid price
-        let mid = (bid + ask) / 2.0;
-        if mid > 0.0 {
-            // Update tick price keeper periodically
-            self.tick_price_keeper.on_period_callback(timestamp);
-            
-            // Store mid price for volatility calculation
-            self.mid_prices.push_back(mid);
-            
-            // Maintain max length
-            while self.mid_prices.len() > self.max_length {
-                self.mid_prices.pop_front();
-            }
-        }
-        
         // Update cache if enough time has passed
         if timestamp >= self.last_cache_timestamp + self.frequency_ms {
+            // Calculate and store mid price
+            let mid = (bid + ask) / 2.0;
+            if mid > 0.0 {
+                // Update tick price keeper periodically
+                self.tick_price_keeper.on_period_callback(timestamp);
+                
+                // Store mid price for volatility calculation
+                self.mid_prices.push_back(mid);
+                
+                // Maintain max length
+                while self.mid_prices.len() > self.max_length {
+                    self.mid_prices.pop_front();
+                }
+            }
             self.update_cache();
             self.last_cache_timestamp = timestamp;
         }
