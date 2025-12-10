@@ -19,7 +19,7 @@ impl StdPercentageKeeper {
     /// # Arguments
     /// * `period` - Period for volatility calculation
     /// * `frequency_ms` - Frequency in milliseconds for caching STD
-    /// * `max_length` - Maximum length for price history
+    /// * `max_length` - Maximum length for price history, usually same as the period
     pub fn new(period: usize, frequency_ms: u64, max_length: usize) -> Self {
         StdPercentageKeeper {
             tick_price_keeper: TickPriceKeeper::new(frequency_ms as usize, max_length),
@@ -76,14 +76,14 @@ impl StdPercentageKeeper {
 
     /// Calculates the percentage-based standard deviation from the mid price history
     fn calculate_std(&self) -> f64 {
-        if self.mid_prices.len() < self.period {
+        if self.mid_prices.is_empty() {
             return 0.0;
         }
 
         // Convert VecDeque to Vec for calculate_volatility_percentage
         let prices: Vec<f64> = self.mid_prices.iter().copied().collect();
         
-        // Calculate volatility for all prices
+        // Calculate volatility for all prices (handles cases where len < period)
         let volatilities = calculate_volatility_percentage(&prices, self.period);
         
         // Return the last (most recent) volatility value, or 0.0 if None
