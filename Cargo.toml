@@ -1,0 +1,17 @@
+[package]
+name = "rust-talib"
+version = "0.1.0"
+edition = "2021"
+authors = ["300K"]
+description = "Rust implementation of technical analysis library (TA-Lib)"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/300k-xyz/rust-talib"
+
+[lib]
+name = "rust_talib"
+path = "src/lib.rs"
+
+[dependencies]
+
+[dev-dependencies]
+
