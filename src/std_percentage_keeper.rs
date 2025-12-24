@@ -39,6 +39,10 @@ impl StdPercentageKeeper {
         }
     }
 
+    pub fn get_last_timestamp(&self) -> u64 {
+        self.last_cache_timestamp
+    }
+
     /// Updates the current bid and ask prices
     pub fn on_receive_tick(&mut self, timestamp: u64, bid: f64, ask: f64) {
         self.tick_price_keeper.on_receive_tick(bid, ask);
