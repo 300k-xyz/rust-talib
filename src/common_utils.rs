@@ -68,14 +68,14 @@ pub fn get_variance(
 /// # Returns
 /// Vector of volatility values (same length as input, first period-1 values are None)
 pub fn calculate_volatility_percentage(prices: &[f64], period: usize) -> Vec<Option<f64>> {
-    if prices.len() < period {
+    if period == 0 || prices.len() < period {
         return vec![None; prices.len()];
     }
 
     let mut volatilities = vec![None; period - 1];
 
     for i in (period - 1)..prices.len() {
-        let window_start = i - period + 1;
+        let window_start = (i + 1).saturating_sub(period);
         let window_prices = &prices[window_start..=i];
         
         // Calculate returns

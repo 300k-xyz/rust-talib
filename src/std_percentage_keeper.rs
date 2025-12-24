@@ -21,6 +21,13 @@ impl StdPercentageKeeper {
     /// * `frequency_ms` - Frequency in milliseconds for caching STD
     /// * `max_length` - Maximum length for price history, usually same as the period
     pub fn new(period: usize, frequency_ms: u64, max_length: usize) -> Self {
+        let max_length = if max_length < period {
+            eprintln!("Warning: StdPercentageKeeper max_length ({}) is less than period ({}), setting max_length to period", max_length, period);
+            period
+        } else {
+            max_length
+        };
+        
         StdPercentageKeeper {
             tick_price_keeper: TickPriceKeeper::new(frequency_ms as usize, max_length),
             mid_prices: VecDeque::with_capacity(max_length),
